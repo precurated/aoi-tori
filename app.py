@@ -1,4 +1,5 @@
-from bottle import route, run, template #web framework
+from bottle import route, run, template, debug, static_file
+
 import sqlite3
 
 @route('/')
@@ -11,4 +12,9 @@ def show_db():
 	output = template('database_view', rows=data)
 	return output
 
-run(host='0.0.0.0', port=8080)
+@route('/<filename:re:.*\.css>')
+def stylesheets(filename):
+    return static_file(filename, root='static/css')
+
+debug(True)
+run(host='0.0.0.0', port=8080, reloader=True)
