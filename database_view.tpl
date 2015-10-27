@@ -1,8 +1,13 @@
 <link rel="stylesheet" type="text/css" href="style.css">
 
-<h1>Database View</h1>
+<h1>{{title}}</h1>
 <table border="1">
-<tr><th>account_id</th><th>twitter name</th><th>subreddit</th></tr>
+<tr>
+%for column in columns:
+	<th>{{column}}</th>
+%end
+</tr>
+
 %for row in rows:
     <tr>
     %for col in row:
@@ -11,3 +16,5 @@
     </tr>
 %end
 </table>
+
+<p align=center><a href="/">home</a> - add - modify - analyze - auth</p>
