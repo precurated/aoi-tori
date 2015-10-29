@@ -24,12 +24,7 @@ get content from reddit
 database content schema(avoid duplicates etc)  
 manual post scheduling
 
-changes:
-
-0.02
-small code fixes and css
-
-0.01  
+done:
 web server working  
-init database(very simple template)  
+init database
 print database to html

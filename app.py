@@ -1,5 +1,6 @@
 from bottle import route, view, run, template, debug, static_file, request
-
+from datetime import datetime
+import time
 import sqlite3
 
 @route('/<filename:re:.*\.css>')
@@ -17,7 +18,8 @@ def show_db():
 	data = c.fetchall()
 	c.close()
 
-	return {"rows":data, "title":"Db view", "columns":["account_id","twitter_name","subreddit_name"]}
+	return {"rows":data, "title":"Db view", "columns":["account_id","twitter_name","subreddit_name"],"date":datetime.now()}
+
 
 debug(True)
 run(host='0.0.0.0', port=8080, reloader=True)

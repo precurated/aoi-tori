@@ -17,4 +17,6 @@
 %end
 </table>
 
+{{date}}
+
 <p align=center><a href="/">home</a> - add - modify - analyze - auth</p>
