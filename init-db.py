@@ -2,7 +2,7 @@
 
 import sqlite3
 
-db = sqlite3.connect('aoi-tori.db')
+db = sqlite3.connect('database.db')
 
 db.execute("DROP TABLE IF EXISTS twitter_account")
 db.execute("DROP TABLE IF EXISTS twitter_group")
@@ -34,7 +34,7 @@ db.execute("CREATE TABLE twitter_account (\
 	twitter_account_subreddits CHAR(1000),\
 	twitter_account_exclude_words_local CHAR(1000),\
 	twitter_account_exclude_domains_local CHAR(1000),\
-	twitter_account_self_posts INTEGER,\
+	twitter_account_self_posts INTEGER DEFAULT 0,\
 	twitter_account_twitter_group_id INTEGER REFERENCES twitter_group(twitter_group_id)\
 	)")
 db.execute("CREATE TABLE twitter_status (\
@@ -43,10 +43,27 @@ db.execute("CREATE TABLE twitter_status (\
 	twitter_status_source_time CHAR(1000),\
 	twitter_status_post_date CHAR(1000),\
 	twitter_status_twitter_account_id INTEGER REFERENCES twitter_account(twitter_account_id),\
-	twitter_status_recurrent_interval INTEGER,\
-	twitter_status_text  CHAR(1000),\
-	twitter_status_posted INTEGER,\
+	twitter_status_recurrent_interval INTEGER DEFAULT 0,\
+	twitter_status_text CHAR(1000),\
+	twitter_status_posted INTEGER DEFAULT 0,\
 	twitter_status_hashtags CHAR(1000)\
+	)")
+
+db.execute("INSERT INTO twitter_account (\
+	twitter_account_id,\
+	twitter_account_name\
+	) VALUES (\
+	1,\
+	'test_name'\
+	)")
+db.execute("INSERT INTO global_rules (\
+	global_rules_id,\
+	global_rules_exclude_domains_global,\
+	global_rules_exclude_words_global\
+	) VALUES (\
+	1,\
+	'reddit.com;',\
+	'reddit'\
 	)")
 
 db.commit()

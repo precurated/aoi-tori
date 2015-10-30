@@ -1,3 +1,6 @@
+%import datetime
+%import time
+
 <link rel="stylesheet" type="text/css" href="style.css">
 
 <h1>{{title}}</h1>
@@ -17,6 +20,8 @@
 %end
 </table>
 
-{{date}}
-
 <p align=center><a href="/">home</a> - add - modify - analyze - auth</p>
+
+%time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+<p align=right>{{time}}</p>

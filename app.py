@@ -1,24 +1,42 @@
 from bottle import route, view, run, template, debug, static_file, request
-from datetime import datetime
+import datetime
 import time
 import sqlite3
+
+global database_file
+database_file = 'database.db'
+
+def database_Connect():
+	db = sqlite3.connect(database_file)
+	cursor = db.cursor()
+	return cursor
+
+def database_TableColumnNames(TableName, cursor):
+	cursor.execute("SELECT * FROM " + TableName)
+	columns = list(map(lambda x: x[0], cursor.description))
+	return columns
 
 @route('/<filename:re:.*\.css>')
 def stylesheets(filename):
     return static_file(filename, root='static/css')
 
+
 @route('/') #index
 @view('database_view') #tpl
 def show_db():
-	db = sqlite3.connect('aoi-tori.db')
-	c = db.cursor()
 
-	#c.execute("SELECT twitter_account.id, twitter_account.name, subreddit.name FROM twitter_account INNER JOIN subreddit on twitter_account.id = subreddit.account_id")
+	cursor = database_Connect()
+	cursor.execute("SELECT * FROM global_rules")
+	data = cursor.fetchall()
 
-	data = c.fetchall()
-	c.close()
+	return {\
+	"columns":database_TableColumnNames('global_rules', cursor),\
+	"rows":data,\
+	"title":"Db view"\
+	}
 
-	return {"rows":data, "title":"Db view", "columns":["account_id","twitter_name","subreddit_name"],"date":datetime.now()}
+	cursor.close()
+
 
 
 debug(True)
