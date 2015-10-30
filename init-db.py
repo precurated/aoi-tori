@@ -5,6 +5,8 @@ import sqlite3
 db = sqlite3.connect('database.db')
 
 db.executescript("""
+    PRAGMA foreign_keys = ON;
+
     DROP TABLE IF EXISTS global_rules;
     CREATE TABLE global_rules (
         global_rules_id INTEGER PRIMARY KEY NOT NULL,
