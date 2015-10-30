@@ -1,69 +1,64 @@
-#create sample db structure
+# create sample db structure
 
 import sqlite3
 
 db = sqlite3.connect('database.db')
 
-db.execute("DROP TABLE IF EXISTS twitter_account")
-db.execute("DROP TABLE IF EXISTS twitter_group")
-db.execute("DROP TABLE IF EXISTS twitter_app")
-db.execute("DROP TABLE IF EXISTS twitter_status")
-db.execute("DROP TABLE IF EXISTS global_rules")
+db.executescript("""
+    DROP TABLE IF EXISTS global_rules;
+    CREATE TABLE global_rules (
+        global_rules_id INTEGER PRIMARY KEY NOT NULL,
+        global_rules_exclude_words_global TEXT,
+        global_rules_exclude_domains_global TEXT
+        );
 
-db.execute("CREATE TABLE global_rules (\
-	global_rules_id INTEGER PRIMARY KEY,\
-	global_rules_exclude_words_global CHAR(1000),\
-	global_rules_exclude_domains_global CHAR(1000)\
-	)")
-db.execute("CREATE TABLE twitter_app (\
-	twitter_app_id INTEGER PRIMARY KEY,\
-	twitter_app_access_token CHAR(1000),\
-	twitter_app_access_secret CHAR(1000)\
-	)")
-db.execute("CREATE TABLE twitter_group (\
-	twitter_group_id INTEGER PRIMARY KEY,\
-	twitter_group_proxy CHAR(1000),\
-	twitter_group_twitter_app_id INTEGER REFERENCES twitter_app(twitter_app_id)\
-	)")
-db.execute("CREATE TABLE twitter_account (\
-	twitter_account_id INTEGER PRIMARY KEY,\
-	twitter_account_name CHAR(100),\
-	twitter_account_consumer_key CHAR(1000),\
-	twitter_account_consumer_secret CHAR(1000),\
-	twitter_account_hashtags CHAR(1000),\
-	twitter_account_subreddits CHAR(1000),\
-	twitter_account_exclude_words_local CHAR(1000),\
-	twitter_account_exclude_domains_local CHAR(1000),\
-	twitter_account_self_posts INTEGER DEFAULT 0,\
-	twitter_account_twitter_group_id INTEGER REFERENCES twitter_group(twitter_group_id)\
-	)")
-db.execute("CREATE TABLE twitter_status (\
-	twitter_status_id INTEGER PRIMARY KEY,\
-	twitter_status_url CHAR(1000),\
-	twitter_status_source_time CHAR(1000),\
-	twitter_status_post_date CHAR(1000),\
-	twitter_status_twitter_account_id INTEGER REFERENCES twitter_account(twitter_account_id),\
-	twitter_status_recurrent_interval INTEGER DEFAULT 0,\
-	twitter_status_text CHAR(1000),\
-	twitter_status_posted INTEGER DEFAULT 0,\
-	twitter_status_hashtags CHAR(1000)\
-	)")
+    DROP TABLE IF EXISTS twitter_app;
+    CREATE TABLE twitter_app (
+        twitter_app_id INTEGER PRIMARY KEY NOT NULL,
+        twitter_app_access_token TEXT,
+        twitter_app_access_secret TEXT
+        );
 
-db.execute("INSERT INTO twitter_account (\
-	twitter_account_id,\
-	twitter_account_name\
-	) VALUES (\
-	1,\
-	'test_name'\
-	)")
-db.execute("INSERT INTO global_rules (\
-	global_rules_id,\
-	global_rules_exclude_domains_global,\
-	global_rules_exclude_words_global\
-	) VALUES (\
-	1,\
-	'reddit.com;',\
-	'reddit'\
-	)")
+
+    DROP TABLE IF EXISTS twitter_group;
+    CREATE TABLE twitter_group (
+        twitter_group_id INTEGER PRIMARY KEY NOT NULL,
+        twitter_group_proxy TEXT,
+        twitter_group_twitter_app_id INTEGER REFERENCES twitter_app(twitter_app_id)
+        );
+
+    DROP TABLE IF EXISTS twitter_account;
+    CREATE TABLE twitter_account (
+        twitter_account_id INTEGER PRIMARY KEY NOT NULL,
+        twitter_account_name TEXT,
+        twitter_account_consumer_key TEXT,
+        twitter_account_consumer_secret TEXT,
+        twitter_account_hashtags TEXT,
+        twitter_account_subreddits TEXT,
+        twitter_account_exclude_words_local TEXT,
+        twitter_account_exclude_domains_local TEXT,
+        twitter_account_self_posts INTEGER DEFAULT 0,
+        twitter_account_twitter_group_id INTEGER REFERENCES twitter_group(twitter_group_id)
+        );
+    DROP TABLE IF EXISTS twitter_status;
+    CREATE TABLE twitter_status (
+        twitter_status_id INTEGER PRIMARY KEY NOT NULL,
+        twitter_status_url TEXT,
+        twitter_status_source_time TEXT,
+        twitter_status_post_date TEXT,
+        twitter_status_twitter_account_id INTEGER REFERENCES twitter_account(twitter_account_id),
+        twitter_status_recurrent_interval INTEGER DEFAULT 0,
+        twitter_status_text TEXT,
+        twitter_status_posted INTEGER DEFAULT 0,
+        twitter_status_hashtags TEXT
+        );
+    """)
+
+db.executescript("""
+    INSERT INTO twitter_account (twitter_account_id, twitter_account_name)
+        VALUES (1, 'test_name');
+    INSERT INTO global_rules (global_rules_id, global_rules_exclude_domains_global, global_rules_exclude_words_global)
+        VALUES (1, 'reddit.com;', 'reddit');
+    """)
 
 db.commit()
